@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% block title %}Verify certificate{% endblock %}
+{% block content %}
+<div class="narrow">
+  <div class="eyebrow">Certificate verification</div>
+  {% if certificate %}
+    <h1>✅ Valid certificate</h1>
+    <div class="card">
+      <p><b>{{ certificate.signup.volunteer.get_full_name|default:certificate.signup.volunteer.username }}</b> completed
+      <b>{{ certificate.total_hours|floatformat:"-2" }}</b> verified hours for “{{ certificate.signup.drive.title }}”.</p>
+      <p class="meta">Signed by {{ certificate.signup.drive.organizer.profile.organization_name }} · issued {{ certificate.issued_at|date:"M d, Y" }}</p>
+    </div>
+  {% else %}
+    <h1>❌ Not found</h1><p class="sub">No certificate matches this code.</p>
+  {% endif %}
+</div>
+{% endblock %}

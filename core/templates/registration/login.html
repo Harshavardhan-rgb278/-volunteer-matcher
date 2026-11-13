@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="narrow">
+  <div class="eyebrow">Welcome back</div><h1>Log in</h1>
+  <form method="post" class="stack card">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Log in</button>
+    <p class="meta" style="margin-top:14px">New here? <a href="{% url 'register' %}">Create an account</a></p>
+  </form>
+</div>
+{% endblock %}

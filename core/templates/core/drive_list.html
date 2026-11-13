@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% block title %}Browse drives{% endblock %}
+{% block content %}
+<div class="eyebrow">Community impact</div>
+<h1>Local volunteer drives</h1>
+<p class="sub">Connecting neighborhood residents with verified non-profit service opportunities.</p>
+<form class="search" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search by title, place or keyword">
+  <button class="btn secondary" type="submit">Search</button>
+</form>
+<div class="grid">
+{% for drive in drives %}
+  <div class="card">
+    <h3><a href="{% url 'drive_detail' drive.pk %}">{{ drive.title }}</a></h3>
+    <div class="meta">{{ drive.organizer.profile.organization_name }}{% if drive.organizer.profile.is_verified %} <span class="badge">Verified</span>{% endif %}</div>
+    <p class="meta">📍 {{ drive.location }}<br>📅 {{ drive.date|date:"M d, Y" }} · ⏱ {{ drive.required_hours|floatformat:"-2" }} hrs required</p>
+    {% if drive.is_full %}<span class="badge red">Full</span>{% else %}<span class="badge">{{ drive.spots_left }} of {{ drive.capacity }} spots left</span>{% endif %}
+  </div>
+{% empty %}
+  <p class="meta">No open drives match right now. Check back soon!</p>
+{% endfor %}
+</div>
+{% endblock %}

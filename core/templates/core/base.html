@@ -1,0 +1,65 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Local Volunteer Matcher{% endblock %}</title>
+<style>
+:root{--navy:#0f172a;--green:#059669;--green-soft:#e8faf3;--blue:#2563eb;--grey:#64748b;--line:#e2e8f0;--bg:#f8fafc;--amber:#f59e0b;--red:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--navy);line-height:1.5}
+a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}
+header{background:var(--navy);color:#fff}
+.nav{max-width:1000px;margin:auto;padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:#fff;font-size:1.1rem}.brand span{color:#10b981}
+.nav a{color:#cbd5e1}.nav .sp{flex:1}
+.nav form{display:inline}
+.linkbtn{background:none;border:0;color:#cbd5e1;cursor:pointer;font:inherit;padding:0}
+main{max-width:1000px;margin:28px auto;padding:0 20px}
+h1{margin:0 0 6px;font-size:1.9rem}.eyebrow{color:var(--green);font-weight:700;letter-spacing:.08em;font-size:.78rem;text-transform:uppercase}
+.sub{color:var(--grey);margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{margin:0 0 6px}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600;background:var(--green-soft);color:var(--green)}
+.badge.blue{background:#eff6ff;color:var(--blue)}.badge.amber{background:#fef3c7;color:#b45309}.badge.red{background:#fee2e2;color:var(--red)}
+.meta{color:var(--grey);font-size:.92rem}
+.btn{display:inline-block;background:var(--green);color:#fff;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{text-decoration:none;opacity:.92}.btn.secondary{background:var(--navy)}.btn.danger{background:var(--red)}.btn.small{padding:5px 12px;font-size:.88rem}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}.bar>i{display:block;height:100%;background:var(--green)}
+form.stack p{margin:0 0 14px}form.stack label{display:block;font-weight:600;margin-bottom:4px}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
+.helptext,.errorlist{font-size:.85rem;color:var(--grey);margin:4px 0 0;padding:0;list-style:none}.errorlist{color:var(--red)}
+.msg{padding:11px 15px;border-radius:10px;margin-bottom:10px;background:#eff6ff;color:#1e40af}
+.msg.success{background:var(--green-soft);color:#065f46}.msg.error{background:#fee2e2;color:#991b1b}.msg.warning{background:#fef3c7;color:#92400e}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:.93rem;vertical-align:middle}th{background:#f1f5f9}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat b{display:block;font-size:2rem}
+.search{display:flex;gap:8px;margin-bottom:20px}.search input{max-width:360px}
+.narrow{max-width:520px}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <a class="brand" href="{% url 'drive_list' %}">Local Volunteer <span>Matcher</span></a>
+  <a href="{% url 'drive_list' %}">Browse drives</a>
+  {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}">My dashboard</a>
+    {% if user.profile.is_organizer %}<a href="{% url 'review_logs' %}">Review hours</a>{% endif %}
+    {% if user.profile.is_manager %}<a href="{% url 'manager_dashboard' %}">Manager queue</a>{% endif %}
+    <span class="sp"></span>
+    <span style="color:#94a3b8">{{ user.username }}</span>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="linkbtn">Log out</button></form>
+  {% else %}
+    <span class="sp"></span>
+    <a href="{% url 'login' %}">Log in</a>
+    <a href="{% url 'register' %}">Sign up</a>
+  {% endif %}
+</div></header>
+<main>
+  {% for message in messages %}<div class="msg {{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

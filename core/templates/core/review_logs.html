@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}Review hours{% endblock %}
+{% block content %}
+<div class="eyebrow">Admin review</div>
+<h1>Pending volunteer hours</h1>
+<p class="sub">Hours your manager has already checked appear here for final approval. A certificate is issued automatically once a volunteer reaches the drive's required hours.</p>
+<table>
+  <tr><th>Volunteer</th><th>Drive</th><th>Date</th><th>Hours</th><th>Activity / manager check</th><th>Decision</th></tr>
+  {% for log in logs %}
+  <tr>
+    <td>{{ log.signup.volunteer.get_full_name|default:log.signup.volunteer.username }}</td>
+    <td>{{ log.signup.drive.title }}</td>
+    <td>{{ log.date|date:"M d" }}</td>
+    <td>{{ log.hours|floatformat:"-2" }}</td>
+    <td class="meta">{{ log.description|default:"—" }}{% if log.manager %}<br><span class="badge blue">Checked by {{ log.manager.username }}</span>{% if log.manager_note %} {{ log.manager_note }}{% endif %}{% endif %}</td>
+    <td>
+      <form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}
+        <input name="note" placeholder="Optional note" style="min-width:120px;padding:5px 8px">
+        <button class="btn small" formaction="{% url 'review_log_action' log.pk 'approve' %}">Approve</button>
+        <button class="btn small danger" formaction="{% url 'review_log_action' log.pk 'reject' %}">Reject</button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="meta">Nothing waiting for review. 🎉</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

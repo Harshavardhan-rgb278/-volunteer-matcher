@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block title %}Manager queue{% endblock %}
+{% block content %}
+<div class="eyebrow">Manager</div>
+<h1>Volunteer activity check</h1>
+{% if not organizer %}
+  <div class="msg warning">You haven't been assigned to a non-profit yet. Ask the site administrator to set "Reports to" on your profile in the admin panel.</div>
+{% else %}
+  <p class="sub">You work for <b>{{ organizer.profile.organization_name }}</b>. Check each volunteer's logged activity: approved hours go on to the admin for final approval.</p>
+  <div class="stats">
+    <div class="card stat"><b>{{ logs|length }}</b><span class="meta">waiting for your check</span></div>
+    <div class="card stat"><b>{{ reviewed_count }}</b><span class="meta">checked by you so far</span></div>
+  </div>
+
+  <h2>Hours waiting for your check</h2>
+  <table>
+    <tr><th>Volunteer</th><th>Drive</th><th>Date</th><th>Hours</th><th>Activity</th><th>Decision</th></tr>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.signup.volunteer.get_full_name|default:log.signup.volunteer.username }}</td>
+      <td>{{ log.signup.drive.title }}</td>
+      <td>{{ log.date|date:"M d" }}</td>
+      <td>{{ log.hours|floatformat:"-2" }}</td>
+      <td class="meta">{{ log.description|default:"—" }}</td>
+      <td>
+        <form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}
+          <input name="note" placeholder="Optional note" style="min-width:120px;padding:5px 8px">
+          <button class="btn small" formaction="{% url 'manager_review_action' log.pk 'approve' %}">Approve &amp; send to admin</button>
+          <button class="btn small danger" formaction="{% url 'manager_review_action' log.pk 'reject' %}">Reject</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}<tr><td colspan="6" class="meta">Nothing waiting for your check. 🎉</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2 style="margin-top:32px">Volunteers on your drives</h2>
+  <table>
+    <tr><th>Volunteer</th><th>Drive</th><th>Verified hrs</th><th>Awaiting you</th><th>Awaiting admin</th></tr>
+    {% for s in volunteers %}
+    <tr>
+      <td>{{ s.volunteer.get_full_name|default:s.volunteer.username }}</td>
+      <td>{{ s.drive.title }}</td>
+      <td>{{ s.approved_hours|floatformat:"-2" }} / {{ s.drive.required_hours|floatformat:"-2" }}</td>
+      <td>{{ s.pending_hours|floatformat:"-2" }}</td>
+      <td>{{ s.manager_approved_hours|floatformat:"-2" }}</td>
+    </tr>
+    {% empty %}<tr><td colspan="5" class="meta">No volunteers have joined your drives yet.</td></tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

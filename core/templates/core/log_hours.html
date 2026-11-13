@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block title %}Log hours{% endblock %}
+{% block content %}
+<div class="narrow">
+  <div class="eyebrow">Hour tracker</div><h1>Log hours</h1>
+  <p class="sub">{{ signup.drive.title }} · {{ signup.approved_hours|floatformat:"-2" }} of {{ signup.drive.required_hours|floatformat:"-2" }} hrs verified</p>
+  <form method="post" class="stack card">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Submit for review</button>
+    <a href="{% url 'volunteer_dashboard' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

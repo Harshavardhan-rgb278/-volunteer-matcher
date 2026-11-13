@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block title %}Organizer dashboard{% endblock %}
+{% block content %}
+<div class="eyebrow">Non-profit admin</div>
+<h1>{{ user.profile.organization_name }}</h1>
+{% if not verified %}
+  <div class="msg warning">Your organization is awaiting verification. Once a site administrator issues your organizer credentials you can publish drives and certificates will be issued.</div>
+{% endif %}
+<div class="stats">
+  <div class="card stat"><b>{{ drives|length }}</b><span class="meta">drives posted</span></div>
+  <div class="card stat"><b>{{ pending_count }}</b><span class="meta">logs awaiting your approval</span></div>
+</div>
+<p>
+  {% if verified %}<a class="btn" href="{% url 'drive_create' %}">+ Publish a drive</a>{% endif %}
+  <a class="btn secondary" href="{% url 'review_logs' %}">Review submitted hours</a>
+</p>
+<table>
+  <tr><th>Drive</th><th>Date</th><th>Volunteers</th><th>Req. hrs</th><th>Status</th><th></th></tr>
+  {% for d in drives %}
+  <tr>
+    <td><a href="{% url 'drive_detail' d.pk %}">{{ d.title }}</a></td>
+    <td>{{ d.date|date:"M d, Y" }}</td>
+    <td>{{ d.spots_taken }} / {{ d.capacity }}</td>
+    <td>{{ d.required_hours|floatformat:"-2" }}</td>
+    <td><span class="badge {% if not d.is_open %}red{% endif %}">{% if d.is_open %}Open{% else %}Closed{% endif %}</span></td>
+    <td><a href="{% url 'drive_edit' d.pk %}">Edit</a></td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="meta">No drives yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

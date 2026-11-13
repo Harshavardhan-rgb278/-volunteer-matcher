@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<div class="narrow">
+  <div class="eyebrow">Join the network</div><h1>Create your account</h1>
+  <p class="sub">Choose <b>Resident / Volunteer</b> to find drives, <b>Manager</b> to check volunteers' activity, or <b>Non-Profit Admin</b> to publish drives.</p>
+  <form method="post" class="stack card">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Sign up</button>
+  </form>
+</div>
+{% endblock %}
